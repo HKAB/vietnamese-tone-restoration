@@ -1,24 +1,32 @@
 
-# Vietnamese Diacritics Restoration
+# Vietnamese tone restoration
 
-A project of NLP class
+A Natural Language Processing project for restoring Vietnamese sentence tone.
 
 
-
-## Installation 
-
-Dataset: [Title of ~10M news](https://drive.google.com/u/0/uc?id=1ypvEoGRNWrNLmW246RtBm9iMyKXm_2BP&export=download)
-
-Make sure you have Anaconda installed
+## Requirements 
 
 ```bash 
-  conda create -n nlp python=3.6
-  conda activate nlp
-  pip install jupyterlab numpy pandas torch
+torch, torchtext, pandas, numpy, tqdm, matplotlib (newest version)
 ```
     
+## Documentation
+
+  Current solution:
+  
+  - GRU encoder decoder with beam search
+  - Transformers with beam search
+Temperary result training on 100K sentences (evaluate on 1K sentences)
+  
+  - GRU encoder decoder: 0.712 (~40 minutes training)
+  - Transfomers: **0.742** (~11 minutes training)
+
+*updating...*
 ## Authors
 
-- [@Me](https://www.github.com/)
+- [@HKAB](https://www.github.com/HKAB)
+- [@tacbliw](https://github.com/tacbliw)
+- [@xuantruong2000](https://github.com/xuantruong2000)
+- [@ultoxtung](https://github.com/ultoxtung)
 
   
