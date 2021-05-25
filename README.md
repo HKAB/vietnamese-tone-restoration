@@ -16,6 +16,7 @@ torch, torchtext, pandas, numpy, tqdm, matplotlib (newest version)
   
   - GRU encoder decoder with beam search
   - Transformers with beam search
+
 Temperary result training on 100K sentences (evaluate on 1K sentences)
   
   - GRU encoder decoder: 0.712 (~40 minutes training)
