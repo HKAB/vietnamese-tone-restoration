@@ -21,6 +21,7 @@ Temperary result training on 100K sentences (evaluate on 1K sentences)
   
   - GRU encoder decoder: 0.712 (~40 minutes training)
   - Transfomers: **0.742** (~11 minutes training)
+  - N-Gram: 0.722 (~2h 16min inference)
 
 *updating...*
 ## Authors
