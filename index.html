@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Welcome</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+		integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"
+		integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body>
+	<div class="container">
+		<div class="row justify-content-md-center">
+			<img src="assets/icon.png" width="600" height="522">
+		</div>
+		<div class="row justify-content-md-center">
+			<div class="input-group">
+				<textarea class="form-control sentence" aria-label="With textarea"></textarea>
+				<div class="input-group-append">
+					<button type="button" data-toggle="tooltip" data-placement="top"
+						title="Do you know sometime this problem can be solved by turn your fucking unikey on 😏"
+						class="btn btn-dark" id="fix-btn">Fix 🔍</button>
+				</div>
+			</div>
+		</div>
+
+		<p class="h1">Result</p>
+
+		<div class="row">
+			<div class="result container">
+				<!-- <a class="btn btn-primary" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Toggle first element</a> -->
+			</div>
+			<!-- <div id="plot" style="width:600px;height:250px;"></div> -->
+		</div>
+	</div>
+	<!-- Modal -->
+	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-xl modal-dialog-centered">
+			<div class="modal-content">
+				<!-- <div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div> -->
+				<div class="modal-body">
+					<div class="container ">
+						<div class="row g-2">
+							<div class="col text-center">
+								<button type="button" class="btn btn-outline-primary transformers"><img
+										src="assets/chems_transformers.png" width="300" height="400"></img></button>
+								<p class="h5">Transformers <small class="text-muted">(fast, strong)</small></p>
+							</div>
+							<div class="col text-center"><button type="button" class="btn btn-outline-primary gru"><img
+										src="assets/chems_gru.png" width="300" height="400"></img></button>
+								<p class="h5">GRU Encoder Decoder <small class="text-muted">(fat, weak like your
+										mom)</small></p>
+							</div>
+							<div class="col text-center"><button type="button" class="btn btn-outline-primary"><img
+										src="assets/chems_n_gram.png" width="300" height="400"></img></button>
+								<p class="h5">N-gram <small class="text-muted">(don't mention this shit)</small></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- <div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary">Save changes</button>
+				</div> -->
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(function () {
+			$('[data-toggle="tooltip"]').tooltip()
+		})
+
+		// $(document).ready(function(){
+		// 	$('#exampleModal').modal('show');
+		// });
+
+
+		$("#fix-btn").click(function () {
+			$('#exampleModal').modal('show');
+			// $.ajax({
+			// 	url: "http://127.0.0.1:5000/predict",
+			// 	type: 'post',
+			// 	data: JSON.stringify({ sentence: 'Nhan nai khi nguoi dan giai thich 101 ly do xin ra vao Go Vap' }),
+			// 	dataType: "json",
+			// 	success: function (result) {
+			// 		alert(result)
+			// 	}
+			// });
+		});
+
+		$(".transformers").click(function () {
+			var sentence = $(".sentence").val();
+
+			if (sentence !== "") {
+				$.ajax({
+					url: "http://127.0.0.1:5000/transformers_predict",
+					type: 'post',
+					data: JSON.stringify({ "sentence": sentence }),
+					dataType: "json",
+					success: function (result) {
+						console.log(result)
+
+						for (let i = 0; i < result['attention'].length; i++) {
+							$('.result').append(
+								'<div class="row" id="layer_' + i + '_p0"></div>'
+							)
+							$('.result').append(
+								'<div class="row" id="layer_' + i + '_p1"></div>'
+							)
+							for (let j = 0; j < result['attention'][i].length; j++) {
+								const element = result['attention'][i][j];
+								data = [{
+									z: element,
+									x: (sentence + " <eos>").split(" "),
+									y: (sentence + " <eos>").split(" "),
+									type: 'heatmap',
+									hoverongaps: false
+								}]
+								$('#layer_' + i + '_p' + Math.floor(j / 4)).append(
+									'<div class="col-3" id="layer_' + i + '_head' + j + '"></div>'
+								)
+
+								var layout = {
+									title: 'Layer ' + i + ' head ' + j,
+									yaxis: {
+										ticks: '',
+										ticksuffix: ' ',
+										width: 700,
+										height: 700,
+										autosize: false
+									}
+								};
+
+								Plotly.newPlot('layer_' + i + '_head' + j, data, layout);
+							}
+
+						};
+						// alert(result)
+						// for (let i = 0; i < result.length; i++) {
+						// 	const element = result[i];
+						// 	$('.result').append(
+						// 		'<a class="btn btn-primary" data-bs-toggle="collapse" href="#multiCollapseExample'+ i +'" role="button" aria-expanded="false" aria-controls="multiCollapseExample'+ i +'">' + element + '</a>'
+						// 	)
+						// }
+					}
+				});
+			}
+			else {
+				alert('baka!')
+			}
+
+		});
+
+		$(".gru").click(function () {
+			var sentence = $(".sentence").val();
+
+			if (sentence !== "") {
+				$.ajax({
+					url: "http://127.0.0.1:5000/gru_predict",
+					type: 'post',
+					data: JSON.stringify({ "sentence": sentence }),
+					dataType: "json",
+					success: function (result) {
+						console.log(result)
+						$('.result').append(
+							'<div class="row" id="result_attention"></div>'
+						)
+						for (let i = 0; i < result['attention'].length; i++) {
+							
+								const element = result['attention'][i];
+								data = [{
+									z: element,
+									x: (sentence + " <eos>").split(" "),
+									y: (result['text_sentence'][i] + " <eos>").split(" "),
+									type: 'heatmap',
+									hoverongaps: false
+								}]
+								$('#result_attention').append(
+									'<div class="col-3" id="result_' + i +'_plot"></div>'
+								)
+
+								var layout = {
+									title: 'Text ' + i,
+									xaxis: {
+										ticks: '',
+										tickangle: 45,
+									},
+									yaxis: {
+										ticks: '',
+										ticksuffix: ' ',
+										width: 700,
+										height: 700,
+										autosize: false
+									}
+								};
+
+								Plotly.newPlot('result_' + i + '_plot', data, layout);
+							
+						}
+					}
+				});
+			}
+			else {
+				alert('baka')
+			}
+
+		});
+	</script>
+</body>
+
+</html>
