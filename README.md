@@ -31,4 +31,8 @@ Temperary result training on 100K sentences (evaluate on 1K sentences)
 - [@xuantruong2000](https://github.com/xuantruong2000)
 - [@ultoxtung](https://github.com/ultoxtung)
 
-  
+## References
+
+- [d2l.ai](https://d2l.ai/) (most codes are borrowed from here)
+- [Veritable Tech Blog](https://blog.ceshine.net/post/implementing-beam-search-part-1/) (beam search idea)
+- [Language Translation with TorchText](https://pytorch.org/tutorials/beginner/torchtext_translation_tutorial.html)
