@@ -1,6 +1,8 @@
 
 # Vietnamese tone restoration
 
+![logo](./assets/icon.png)
+
 A Natural Language Processing project for restoring Vietnamese sentence tone.
 
 
@@ -17,13 +19,24 @@ torch, torchtext, pandas, numpy, tqdm, matplotlib (newest version)
   - GRU encoder decoder with beam search
   - Transformers with beam search
 
-Temperary result training on 100K sentences (evaluate on 1K sentences)
+Result training on 100K sentences (evaluate on 1K sentences)
   
   - GRU encoder decoder: 0.712 (~40 minutes training)
   - Transfomers: **0.742** (~11 minutes training)
   - N-Gram: 0.722 (~2h 16min inference)
+  - 
+Result training on 200K sentences (evaluate on 500 sentences)
+  
+  - GRU encoder decoder: 0.66 (~140 minutes training)
+  - Transfomers: *updating* 
+  - N-Gram: 0.813 (~2h 3min inference)
+  - One shot BASE Transformers: 0.818
+
+Result training on 2M senteces (evaluate on 1K sentences)
+  - Transfomers (BASE like in the paper): **0.937** (~20 hours training on GTX 2080)
 
 *updating...*
+
 ## Authors
 
 - [@HKAB](https://www.github.com/HKAB)
