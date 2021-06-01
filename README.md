@@ -9,33 +9,68 @@ A Natural Language Processing project for restoring Vietnamese sentence tone.
 ## Requirements 
 
 ```bash 
-torch, torchtext, pandas, numpy, tqdm, matplotlib (newest version)
+torch, torchtext, pandas, numpy, tqdm, matplotlib, flask (in newest version)
 ```
     
-## Documentation
+## Dataset
 
-  Current solution:
-  
-  - GRU encoder decoder with beam search
-  - Transformers with beam search
+**Dataset 1** includes 100K training sentence, 1K testing sentence from [this repo](https://github.com/binhvq/news-corpus#full-txttitle--description--body-v1). These are title from news article. We choosed this dataset because they are short enough.
 
-Result training on 100K sentences (evaluate on 1K sentences)
-  
-  - GRU encoder decoder: 0.712 (~40 minutes training)
-  - Transfomers: **0.742** (~11 minutes training)
-  - N-Gram: 0.722 (~2h 16min inference)
-  - 
-Result training on 200K sentences (evaluate on 500 sentences)
-  
-  - GRU encoder decoder: 0.66 (~140 minutes training)
-  - Transfomers: *updating* 
-  - N-Gram: 0.813 (~2h 3min inference)
-  - One shot BASE Transformers: 0.818
+**Dataset 2** includes 200K training sentence, 500 testing sentence from our supervisor.
 
-Result training on 2M senteces (evaluate on 1K sentences)
-  - Transfomers (BASE like in the paper): **0.937** (~20 hours training on GTX 2080)
+## Models
 
-*updating...*
+1. Transformers (SMALL)
+    + hidden size: 128
+    + learning rate 0.001
+    + num_heads, num_layers = 4, 2
+    + epoch: 20
+    + beam search size: 4
+2. GRU Encoder Decoder
+    + hidden size: 128
+    + num_layer: 1
+    + learning rate: 0.001
+    + epoch: 20
+    + beam search size: 4
+3. N-gram (baseline from [viblo](https://viblo.asia/p/language-modeling-mo-hinh-ngon-ngu-va-bai-toan-them-dau-cau-trong-tieng-viet-1VgZveV2KAw))
+    + KneserNeyInterpolated
+    + beam search size: 3
+4. Transformers (BASE)
+    + hidden size: 512
+    + learning rate 0.0001
+    + num_heads, num_layers = 4, 2
+    + epoch: we train util the model isn't gain too much
+    + beam search size: 4
+
+All deep learning model are really sensitive to learning rate (in general we found out the bigger the model, the smaller the learning rate should be)
+
+## Results
+
+*Accuracy: Mean accuracy of all sentence*
+
+| Model  | Accuracy on Dataset 1 | Accuracy on Dataset 2 |
+| ------------- | ------------- | ------------- |
+| Transformers (SMALL)  | **0.742**  | 0.651 |
+| GRU encoder decoder  | 0.712  | 0.661 |
+| N-gram  | 0.722  | **0.813** |
+
+We also train Transformers (BASE) model on 2M sentence from Dataset 1 and perform one shot prediction on Dataset 2
+
+| Model  | Accuracy on Dataset 1 | Accuracy on Dataset 2 |
+| ------------- | ------------- | ------------- |
+| Transformers (BASE) | **0.937** | **0.818** (One shot) |
+
+## Web UI
+
+We use Flask to build a web page for interactive experience. It can show the attention from deep learning model and the score of each result in n-gram solution. 
+We can run it by:
+```bash 
+export FLASK_APP=inference.py
+flask run
+```
+Then open `index.html`
+
+*image uploading*
 
 ## Authors
 
