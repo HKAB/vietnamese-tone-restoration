@@ -42,7 +42,7 @@
 		</div>
 	</div>
 	<!-- Modal -->
-	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal" id="methodModal" tabindex="-1" aria-labelledby="methodModal" aria-hidden="true">
 		<div class="modal-dialog modal-xl modal-dialog-centered">
 			<div class="modal-content">
 				<!-- <div class="modal-header">
@@ -62,11 +62,39 @@
 								<p class="h5">GRU Encoder Decoder <small class="text-muted">(fat, weak like your
 										mom)</small></p>
 							</div>
-							<div class="col text-center"><button type="button" class="btn btn-outline-primary"><img
-										src="assets/chems_n_gram.png" width="300" height="400"></img></button>
+							<div class="col text-center"><button type="button"
+									class="btn btn-outline-primary n-gram"><img src="assets/chems_n_gram.png"
+										width="300" height="400"></img></button>
 								<p class="h5">N-gram <small class="text-muted">(don't mention this shit)</small></p>
 							</div>
 						</div>
+					</div>
+				</div>
+				<!-- <div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary">Save changes</button>
+				</div> -->
+			</div>
+		</div>
+	</div>
+
+	<div class="modal" id="loadingModal" tabindex="-1" aria-labelledby="loadingModal" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<!-- <div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div> -->
+				<div class="modal-body">
+					<div class="container">
+					<div class="row justify-content-md-center">
+						<img src="assets/cheems_consider.png" width="373" height="307"></img>
+					</div>
+					<div class="row justify-content-md-center">
+						<div class="spinner-grow" role="status">
+							<span class="sr-only">Loading...</span>
+						</div>
+					</div>
 					</div>
 				</div>
 				<!-- <div class="modal-footer">
@@ -87,20 +115,20 @@
 
 
 		$("#fix-btn").click(function () {
-			$('#exampleModal').modal('show');
-			// $.ajax({
-			// 	url: "http://127.0.0.1:5000/predict",
-			// 	type: 'post',
-			// 	data: JSON.stringify({ sentence: 'Nhan nai khi nguoi dan giai thich 101 ly do xin ra vao Go Vap' }),
-			// 	dataType: "json",
-			// 	success: function (result) {
-			// 		alert(result)
-			// 	}
-			// });
+			$('#methodModal').modal('show');
 		});
+
+		function HTMLescape(html){
+			return document.createElement('div')
+				.appendChild(document.createTextNode(html))
+				.parentNode
+				.innerHTML
+		}
 
 		$(".transformers").click(function () {
 			var sentence = $(".sentence").val();
+			$('#loadingModal').modal('show');
+			$('#methodModal').modal('hide');
 
 			if (sentence !== "") {
 				$.ajax({
@@ -110,6 +138,17 @@
 					dataType: "json",
 					success: function (result) {
 						console.log(result)
+						$('.result').empty()
+
+						$('.result').append(
+							'<div class="row justify-content-md-center"><div><ul class="list-group list-group-flush transformers_result"><ul></div></div>'
+						)
+						for (let i = 0; i < result['text_sentence'].length; i++) {
+							// const element = result[index];
+							$('.transformers_result').append(
+								'<li class="list-group-item d-flex justify-content-between align-items-center"><div class="fw-bold">' + HTMLescape(result['text_sentence'][i]) + '</div></li>'
+							)
+						};
 
 						for (let i = 0; i < result['attention'].length; i++) {
 							$('.result').append(
@@ -146,6 +185,8 @@
 							}
 
 						};
+
+						$('#loadingModal').modal('hide');
 						// alert(result)
 						// for (let i = 0; i < result.length; i++) {
 						// 	const element = result[i];
@@ -165,6 +206,11 @@
 		$(".gru").click(function () {
 			var sentence = $(".sentence").val();
 
+			$('.result').empty()
+
+			$('#loadingModal').modal('show');
+			$('#methodModal').modal('hide');
+
 			if (sentence !== "") {
 				$.ajax({
 					url: "http://127.0.0.1:5000/gru_predict",
@@ -174,40 +220,52 @@
 					success: function (result) {
 						console.log(result)
 						$('.result').append(
+							'<div class="row justify-content-md-center"><div class="col-6"><ul class="list-group list-group-flush gru_result"><ul></div></div>'
+						)
+						for (let i = 0; i < result['text_sentence'].length; i++) {
+							// const element = result[index];
+							$('.gru_result').append(
+								'<li class="list-group-item d-flex justify-content-between align-items-start"><div class="ms-2 me-auto"><div class="fw-bold">' + result['text_sentence'][i] + '</div></div></li>'
+							)
+						};
+
+						$('.result').append(
 							'<div class="row" id="result_attention"></div>'
 						)
 						for (let i = 0; i < result['attention'].length; i++) {
-							
-								const element = result['attention'][i];
-								data = [{
-									z: element,
-									x: (sentence + " <eos>").split(" "),
-									y: (result['text_sentence'][i] + " <eos>").split(" "),
-									type: 'heatmap',
-									hoverongaps: false
-								}]
-								$('#result_attention').append(
-									'<div class="col-3" id="result_' + i +'_plot"></div>'
-								)
 
-								var layout = {
-									title: 'Text ' + i,
-									xaxis: {
-										ticks: '',
-										tickangle: 45,
-									},
-									yaxis: {
-										ticks: '',
-										ticksuffix: ' ',
-										width: 700,
-										height: 700,
-										autosize: false
-									}
-								};
+							const element = result['attention'][i];
+							data = [{
+								z: element,
+								x: (sentence + " <eos>").split(" "),
+								y: (result['text_sentence'][i] + " <eos>").split(" "),
+								type: 'heatmap',
+								hoverongaps: false
+							}]
+							$('#result_attention').append(
+								'<div class="col-3" id="result_' + i + '_plot"></div>'
+							)
 
-								Plotly.newPlot('result_' + i + '_plot', data, layout);
-							
+							var layout = {
+								title: 'Text ' + i,
+								xaxis: {
+									ticks: '',
+									tickangle: 45,
+								},
+								yaxis: {
+									ticks: '',
+									ticksuffix: ' ',
+									width: 700,
+									height: 700,
+									autosize: false
+								}
+							};
+
+							Plotly.newPlot('result_' + i + '_plot', data, layout);
+
 						}
+
+						$('#loadingModal').modal('hide');
 					}
 				});
 			}
@@ -215,6 +273,36 @@
 				alert('baka')
 			}
 
+		});
+
+		$(".n-gram").click(function () {
+			var sentence = $(".sentence").val();
+
+			$('.result').empty()
+
+			$('#loadingModal').modal('show');
+			$('#methodModal').modal('hide');
+
+			$.ajax({
+				url: "http://127.0.0.1:5000/n_gram_predict",
+				type: 'post',
+				data: JSON.stringify({ sentence: sentence }),
+				dataType: "json",
+				success: function (result) {
+					console.log(result)
+					$('.result').append(
+						'<div class="row justify-content-md-center"><div class="col-6"><ul class="list-group list-group-flush n_gram_result"><ul></div></div>'
+					)
+					for (let i = 0; i < result['text_sentence'].length; i++) {
+						// const element = result[index];
+						$('.n_gram_result').append(
+							'<li class="list-group-item d-flex justify-content-between align-items-start"><div class="ms-2 me-auto"><div class="fw-bold">' + result['text_sentence'][i] + '</div></div><span style="color: white;" class="badge bg-primary rounded-pill">' + result['score'][i].toFixed(2) + '</span></li>'
+						)
+					};
+
+					$('#loadingModal').modal('hide');
+				}
+			});
 		});
 	</script>
 </body>

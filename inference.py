@@ -4,8 +4,13 @@ from models.gru_encoder_decoder_attention import Encoder as GRU_Encoder, Decoder
 import torch
 from models.utils.beam import Beam, GNMTGlobalScorer, _from_beam
 from models.utils.beam_attention import BeamAttention, _from_beam_attention
+from models.utils.beam_n_gram import beam_search_n_gram
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS, cross_origin
+import os
+import pickle
+from nltk.tokenize.treebank import TreebankWordDetokenizer
+from models.utils.text_processing import clean_text
 
 PAD_IDX, BOS_IDX, EOS_IDX = 1, 2, 3
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -110,6 +115,8 @@ def gru_evaluate(net, sentence, no_tone_vocab, tone_vocab, max_length, device, b
   ret = _from_beam_attention(beam)
   return ret
 
+def n_gram_evaluate(ngram_model, sentence):
+  return beam_search_n_gram(sentence.lower().split(), ngram_model)
 
 tone_vocab = torch.load('./data/vocab/tone_vocab.vocab')
 no_tone_vocab = torch.load('./data/vocab/no_tone_vocab.vocab')
@@ -137,6 +144,7 @@ transformer_net = Seq2Seq(enc, dec, PAD_IDX, device).to(device)
 
 transformer_net.load_state_dict(torch.load("./models/weights/transformers_weight.pt", map_location=torch.device('cpu')))
 transformer_net.eval()
+print('Transformers is loaded')
 
 # gru encoder decoder
 embed_size = 128
@@ -155,15 +163,18 @@ gru_net = GRU_Seq2Seq(gru_enc, gru_dec, tone_vocab.stoi['<pad>'], device).to(dev
 
 gru_net.load_state_dict(torch.load("./models/weights/gru_encoder_decoder_attention_weights.pth", map_location=torch.device('cpu')))
 gru_net.eval()
+print('GRU Encoder Decoder is loaded')
 
-# sentence = "Bao nhieu nam roi"
-# beam = evaluate(net, sentence, no_tone_vocab, tone_vocab, 20, device, 4)
+# n-gram model
 
-# # Tram nam trong coi nguoi ta
-# for num_predict in range(len(beam['predictions'])):
-#     for prediction in beam['predictions'][num_predict]:
-#       print(' '.join(tone_vocab.itos[idx] for idx in prediction[:-1]))
-# #       print(prediction)
+ngram_model_dir = "models/weights"
+with open(os.path.join(ngram_model_dir, 'n-gram.pkl'), 'rb') as fin:
+  ngram_model = pickle.load(fin)
+
+detokenize = TreebankWordDetokenizer().detokenize
+print('N-gram model is loaded')
+
+# print(len(model_loaded.vocab))
 
 
 
@@ -181,7 +192,7 @@ def home():
 def transformer_predict():
 
     data = request.get_json(force=True)
-    sentence = data['sentence']
+    sentence = clean_text(data['sentence'])
     
     beam = transformers_evaluate(transformer_net, sentence, no_tone_vocab, tone_vocab, 20, device, 4)
     
@@ -201,7 +212,7 @@ def transformer_predict():
 def gru_predict():
 
     data = request.get_json(force=True)
-    sentence = data['sentence']
+    sentence = clean_text(data['sentence'])
     
     beam = gru_evaluate(gru_net, sentence, no_tone_vocab, tone_vocab, 20, device, 4)
     
@@ -221,3 +232,16 @@ def gru_predict():
           text_sentence.append(' '.join(tone_vocab.itos[idx] for idx in prediction[:-1]))
     
     return jsonify({"text_sentence": text_sentence, 'attention': attention})
+
+@app.route('/n_gram_predict',methods=['POST'])
+@cross_origin()
+def n_gram_predict():
+
+    data = request.get_json(force=True)
+    sentence = clean_text(data['sentence'])
+    
+    result = n_gram_evaluate(ngram_model, sentence)
+    text_sentence = [' '.join(w for w in r[0]) for r in result]
+    score = [r[1] for r in result]
+    
+    return jsonify({"text_sentence": text_sentence, 'score': score})
