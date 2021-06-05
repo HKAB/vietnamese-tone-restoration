@@ -15,6 +15,8 @@ Weight of the Transformers (BASE) model: [Google drive link](https://drive.googl
 Weight of the GRU Encoder Decoder model: [Google drive link](https://drive.google.com/file/d/1DTnkqbR0dxnYcKIablDmfMaOhbAL5iOu/view?usp=sharing)
 
 Weight of the N-gram model: [Google drive link](https://drive.google.com/file/d/1--6uLCZO9Y3iOT_rfT6gotdXTvl7VjKw/view?usp=sharing)
+
+Put all the weight under `./models/weights`
     
 ## Dataset
 
