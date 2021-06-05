@@ -1,5 +1,5 @@
 
-# Vietnamese tone restoration
+# Vietnamese tone restoration :newspaper:
 
 A Natural Language Processing project for restoring Vietnamese sentence tone.
 
@@ -9,6 +9,12 @@ A Natural Language Processing project for restoring Vietnamese sentence tone.
 ```bash 
 torch, torchtext, pandas, numpy, tqdm, matplotlib, flask (in newest version)
 ```
+
+Weight of the Transformers (BASE) model: [Google drive link](https://drive.google.com/file/d/1pT8MDvXNvt28rok1H8HAfFmqnxorrKZH/view?usp=sharing)
+
+Weight of the GRU Encoder Decoder model: [Google drive link](https://drive.google.com/file/d/1DTnkqbR0dxnYcKIablDmfMaOhbAL5iOu/view?usp=sharing)
+
+Weight of the N-gram model: [Google drive link](https://drive.google.com/file/d/1--6uLCZO9Y3iOT_rfT6gotdXTvl7VjKw/view?usp=sharing)
     
 ## Dataset
 
@@ -93,3 +99,4 @@ Then open `index.html`
 - [d2l.ai](https://d2l.ai/) (most codes are borrowed from here)
 - [Veritable Tech Blog](https://blog.ceshine.net/post/implementing-beam-search-part-1/) (beam search idea)
 - [Language Translation with TorchText](https://pytorch.org/tutorials/beginner/torchtext_translation_tutorial.html)
+- [Viblo](https://viblo.asia/p/language-modeling-mo-hinh-ngon-ngu-va-bai-toan-them-dau-cau-trong-tieng-viet-1VgZveV2KAw) (n-gram baseline)
