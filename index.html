@@ -14,10 +14,12 @@
 		integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
 		crossorigin="anonymous"></script>
 	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;400&display=swap" rel="stylesheet"> 
 </head>
 
 <body>
-	<div class="container">
+	<div class="container main">
 		<div class="row justify-content-md-center">
 			<img src="assets/icon.png" width="600" height="522">
 		</div>
@@ -26,21 +28,23 @@
 				<textarea class="form-control sentence" aria-label="With textarea"></textarea>
 				<div class="input-group-append">
 					<button type="button" data-toggle="tooltip" data-placement="top"
-						title="Do you know sometime this problem can be solved by turn your fucking unikey on 😏"
+						title="Do you know sometime this problem can be solved by turn your unikey on"
 						class="btn btn-dark" id="fix-btn">Fix 🔍</button>
 				</div>
 			</div>
 		</div>
 
-		<p class="h1">Result</p>
+		
 
 		<div class="row">
+			<p class="h1" style="margin-top: 40px;">Result 📄</p>
 			<div class="result container">
 				<!-- <a class="btn btn-primary" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Toggle first element</a> -->
 			</div>
 			<!-- <div id="plot" style="width:600px;height:250px;"></div> -->
 		</div>
 	</div>
+
 	<!-- Modal -->
 	<div class="modal" id="methodModal" tabindex="-1" aria-labelledby="methodModal" aria-hidden="true">
 		<div class="modal-dialog modal-xl modal-dialog-centered">
@@ -59,13 +63,12 @@
 							</div>
 							<div class="col text-center"><button type="button" class="btn btn-outline-primary gru"><img
 										src="assets/chems_gru.png" width="300" height="400"></img></button>
-								<p class="h5">GRU Encoder Decoder <small class="text-muted">(fat, weak like your
-										mom)</small></p>
+								<p class="h5">GRU Encoder Decoder <small class="text-muted">(fat, stonk)</small></p>
 							</div>
 							<div class="col text-center"><button type="button"
 									class="btn btn-outline-primary n-gram"><img src="assets/chems_n_gram.png"
 										width="300" height="400"></img></button>
-								<p class="h5">N-gram <small class="text-muted">(don't mention this shit)</small></p>
+								<p class="h5">N-gram <small class="text-muted">(slow but strong)</small></p>
 							</div>
 						</div>
 					</div>
@@ -104,6 +107,34 @@
 			</div>
 		</div>
 	</div>
+
+	<div class='footer'>
+		<b>Created by a bunch </b>
+		<b>of sad <a href="https://github.com/HKAB/vietnamese-tone-restoration">people</a> with 🍚</b>
+	</div>
+
+	<style>
+		body {
+			font-family: 'Roboto Mono', monospace;
+		}
+
+		.footer {
+			text-align: right;
+			position: fixed;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+			/* background-color: whitesmoke; */
+			color: '#2d3436';
+		}
+
+		body {
+			/* max-width: 100%; */
+			height: 100vh;
+  			/* width: 100vw; */
+		}
+	</style>
+
 	<script type="text/javascript">
 		$(function () {
 			$('[data-toggle="tooltip"]').tooltip()
@@ -164,7 +195,7 @@
 									x: (sentence + " <eos>").split(" "),
 									y: (sentence + " <eos>").split(" "),
 									type: 'heatmap',
-									hoverongaps: false
+									hoverongaps: false,
 								}]
 								$('#layer_' + i + '_p' + Math.floor(j / 4)).append(
 									'<div class="col-3" id="layer_' + i + '_head' + j + '"></div>'
@@ -178,7 +209,12 @@
 										width: 700,
 										height: 700,
 										autosize: false
-									}
+									},
+									font: {
+										family: 'Roboto Mono',
+										// size: 12,
+										// color: 'rgb(50, 171, 96)'
+									},
 								};
 
 								Plotly.newPlot('layer_' + i + '_head' + j, data, layout);
@@ -258,7 +294,12 @@
 									width: 700,
 									height: 700,
 									autosize: false
-								}
+								},
+								font: {
+										family: 'Roboto Mono',
+										// size: 12,
+										// color: 'rgb(50, 171, 96)'
+									},
 							};
 
 							Plotly.newPlot('result_' + i + '_plot', data, layout);
