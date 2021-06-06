@@ -54,7 +54,7 @@ All deep learning model are really sensitive to learning rate (in general we fou
 
 | Model  | Accuracy on Dataset 1 | Accuracy on Dataset 2 |
 | ------------- | ------------- | ------------- |
-| Transformers (SMALL)  | **0.742**  | 0.651 |
+| Transformers (SMALL)  | **0.742**  | 0.766 |
 | GRU encoder decoder  | 0.712  | 0.661 |
 | N-gram  | 0.722  | **0.813** |
 
